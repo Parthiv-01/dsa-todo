@@ -1,0 +1,18 @@
+{
+  "Arrays": {"easy": 6, "medium": 17, "hard": 3},
+  "Strings": {"easy": 7, "medium": 12, "hard": 3},
+  "2D Array": {"easy": 0, "medium": 9, "hard": 1},
+  "Searching & Sorting": {"easy": 6, "medium": 10, "hard": 7},
+  "Backtracking": {"easy": 0, "medium": 8, "hard": 13},
+  "Linked List": {"easy": 7, "medium": 12, "hard": 7},
+  "Stack & Queue": {"easy": 6, "medium": 15, "hard": 6},
+  "Greedy": {"easy": 7, "medium": 9, "hard": 6},
+  "Binary Trees": {"easy": 14, "medium": 15, "hard": 4},
+  "BST": {"easy": 7, "medium": 9, "hard": 5},
+  "Heap & Hashing": {"easy": 0, "medium": 16, "hard": 12},
+  "Graphs": {"easy": 4, "medium": 25, "hard": 11},
+  "Tries": {"easy": 0, "medium": 4, "hard": 2},
+  "DP": {"easy": 9, "medium": 40, "hard": 5},
+  "Bit Manipulation": {"easy": 5, "medium": 5, "hard": 0},
+  "Segment Tree": {"easy": 0, "medium": 3, "hard": 3}
+}

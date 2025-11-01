@@ -1,0 +1,371 @@
+[
+  {
+    "day": 1,
+    "topics": ["Arrays", "Searching & Sorting", "Bit Manipulation"],
+    "questions": [
+      {"topic": "Arrays", "easy": 2, "medium": 1, "hard": 0},
+      {"topic": "Searching & Sorting", "easy": 2, "medium": 1, "hard": 0},
+      {"topic": "Bit Manipulation", "easy": 2, "medium": 0, "hard": 0}
+    ],
+    "total_easy": 6,
+    "total_medium": 2,
+    "total_hard": 0,
+    "phase": "Foundation"
+  },
+  {
+    "day": 2,
+    "topics": ["Strings", "Linked List", "Greedy"],
+    "questions": [
+      {"topic": "Strings", "easy": 2, "medium": 1, "hard": 0},
+      {"topic": "Linked List", "easy": 2, "medium": 1, "hard": 0},
+      {"topic": "Greedy", "easy": 2, "medium": 0, "hard": 0}
+    ],
+    "total_easy": 6,
+    "total_medium": 2,
+    "total_hard": 0,
+    "phase": "Foundation"
+  },
+  {
+    "day": 3,
+    "topics": ["Binary Trees", "Stack & Queue"],
+    "questions": [
+      {"topic": "Binary Trees", "easy": 4, "medium": 2, "hard": 0},
+      {"topic": "Stack & Queue", "easy": 2, "medium": 1, "hard": 0}
+    ],
+    "total_easy": 6,
+    "total_medium": 3,
+    "total_hard": 0,
+    "phase": "Foundation"
+  },
+  {
+    "day": 4,
+    "topics": ["Graphs", "DP"],
+    "questions": [
+      {"topic": "Graphs", "easy": 1, "medium": 1, "hard": 0},
+      {"topic": "DP", "easy": 3, "medium": 1, "hard": 0}
+    ],
+    "total_easy": 4,
+    "total_medium": 2,
+    "total_hard": 0,
+    "phase": "Foundation"
+  },
+  {
+    "day": 5,
+    "topics": ["BST", "Heap & Hashing", "Arrays"],
+    "questions": [
+      {"topic": "BST", "easy": 2, "medium": 1, "hard": 0},
+      {"topic": "Heap & Hashing", "easy": 0, "medium": 4, "hard": 0},
+      {"topic": "Arrays", "easy": 0, "medium": 1, "hard": 0}
+    ],
+    "total_easy": 2,
+    "total_medium": 6,
+    "total_hard": 0,
+    "phase": "Foundation"
+  },
+  {
+    "day": 6,
+    "topics": ["Backtracking", "2D Array"],
+    "questions": [
+      {"topic": "Backtracking", "easy": 0, "medium": 4, "hard": 2},
+      {"topic": "2D Array", "easy": 0, "medium": 3, "hard": 0}
+    ],
+    "total_easy": 0,
+    "total_medium": 7,
+    "total_hard": 2,
+    "phase": "Foundation"
+  },
+  {
+    "day": 7,
+    "topics": ["DP", "Strings", "Bit Manipulation"],
+    "questions": [
+      {"topic": "DP", "easy": 0, "medium": 4, "hard": 0},
+      {"topic": "Strings", "easy": 0, "medium": 1, "hard": 0},
+      {"topic": "Bit Manipulation", "easy": 1, "medium": 0, "hard": 0}
+    ],
+    "total_easy": 1,
+    "total_medium": 5,
+    "total_hard": 0,
+    "phase": "Foundation"
+  },
+  {
+    "day": 8,
+    "topics": ["Graphs", "Greedy"],
+    "questions": [
+      {"topic": "Graphs", "easy": 0, "medium": 4, "hard": 2},
+      {"topic": "Greedy", "easy": 0, "medium": 1, "hard": 0}
+    ],
+    "total_easy": 0,
+    "total_medium": 5,
+    "total_hard": 2,
+    "phase": "Foundation"
+  },
+  {
+    "day": 9,
+    "topics": ["Linked List", "Heap & Hashing", "Searching & Sorting"],
+    "questions": [
+      {"topic": "Linked List", "easy": 0, "medium": 1, "hard": 1},
+      {"topic": "Heap & Hashing", "easy": 0, "medium": 1, "hard": 0},
+      {"topic": "Searching & Sorting", "easy": 1, "medium": 1, "hard": 0}
+    ],
+    "total_easy": 1,
+    "total_medium": 3,
+    "total_hard": 1,
+    "phase": "Foundation"
+  },
+  {
+    "day": 10,
+    "topics": ["Binary Trees", "Stack & Queue", "Tries"],
+    "questions": [
+      {"topic": "Binary Trees", "easy": 1, "medium": 1, "hard": 0},
+      {"topic": "Stack & Queue", "easy": 0, "medium": 1, "hard": 0},
+      {"topic": "Tries", "easy": 0, "medium": 1, "hard": 0}
+    ],
+    "total_easy": 1,
+    "total_medium": 3,
+    "total_hard": 0,
+    "phase": "Foundation"
+  },
+  {
+    "day": 11,
+    "topics": ["DP", "Arrays", "Segment Tree"],
+    "questions": [
+      {"topic": "DP", "easy": 0, "medium": 4, "hard": 0},
+      {"topic": "Arrays", "easy": 0, "medium": 1, "hard": 0},
+      {"topic": "Segment Tree", "easy": 0, "medium": 1, "hard": 0}
+    ],
+    "total_easy": 0,
+    "total_medium": 6,
+    "total_hard": 0,
+    "phase": "Intermediate"
+  },
+  {
+    "day": 12,
+    "topics": ["Graphs", "BST"],
+    "questions": [
+      {"topic": "Graphs", "easy": 0, "medium": 4, "hard": 2},
+      {"topic": "BST", "easy": 0, "medium": 1, "hard": 0}
+    ],
+    "total_easy": 0,
+    "total_medium": 5,
+    "total_hard": 2,
+    "phase": "Intermediate"
+  },
+  {
+    "day": 13,
+    "topics": ["Backtracking", "Strings"],
+    "questions": [
+      {"topic": "Backtracking", "easy": 0, "medium": 1, "hard": 1},
+      {"topic": "Strings", "easy": 0, "medium": 1, "hard": 0}
+    ],
+    "total_easy": 0,
+    "total_medium": 2,
+    "total_hard": 1,
+    "phase": "Intermediate"
+  },
+  {
+    "day": 14,
+    "topics": ["Heap & Hashing", "Searching & Sorting"],
+    "questions": [
+      {"topic": "Heap & Hashing", "easy": 0, "medium": 4, "hard": 2},
+      {"topic": "Searching & Sorting", "easy": 0, "medium": 1, "hard": 0}
+    ],
+    "total_easy": 0,
+    "total_medium": 5,
+    "total_hard": 2,
+    "phase": "Intermediate"
+  },
+  {
+    "day": 15,
+    "topics": ["DP", "Bit Manipulation"],
+    "questions": [
+      {"topic": "DP", "easy": 1, "medium": 1, "hard": 0},
+      {"topic": "Bit Manipulation", "easy": 1, "medium": 0, "hard": 0}
+    ],
+    "total_easy": 2,
+    "total_medium": 1,
+    "total_hard": 0,
+    "phase": "Intermediate"
+  },
+  {
+    "day": 16,
+    "topics": ["Graphs", "Stack & Queue"],
+    "questions": [
+      {"topic": "Graphs", "easy": 0, "medium": 4, "hard": 2},
+      {"topic": "Stack & Queue", "easy": 0, "medium": 1, "hard": 0}
+    ],
+    "total_easy": 0,
+    "total_medium": 5,
+    "total_hard": 2,
+    "phase": "Intermediate"
+  },
+  {
+    "day": 17,
+    "topics": ["Binary Trees", "Greedy", "2D Array"],
+    "questions": [
+      {"topic": "Binary Trees", "easy": 1, "medium": 1, "hard": 0},
+      {"topic": "Greedy", "easy": 1, "medium": 0, "hard": 0},
+      {"topic": "2D Array", "easy": 0, "medium": 1, "hard": 0}
+    ],
+    "total_easy": 2,
+    "total_medium": 2,
+    "total_hard": 0,
+    "phase": "Intermediate"
+  },
+  {
+    "day": 18,
+    "topics": ["Linked List", "Strings", "Tries"],
+    "questions": [
+      {"topic": "Linked List", "easy": 1, "medium": 1, "hard": 0},
+      {"topic": "Strings", "easy": 0, "medium": 1, "hard": 0},
+      {"topic": "Tries", "easy": 0, "medium": 1, "hard": 0}
+    ],
+    "total_easy": 1,
+    "total_medium": 3,
+    "total_hard": 0,
+    "phase": "Intermediate"
+  },
+  {
+    "day": 19,
+    "topics": ["DP", "BST"],
+    "questions": [
+      {"topic": "DP", "easy": 0, "medium": 4, "hard": 2},
+      {"topic": "BST", "easy": 0, "medium": 1, "hard": 0}
+    ],
+    "total_easy": 0,
+    "total_medium": 5,
+    "total_hard": 2,
+    "phase": "Intermediate"
+  },
+  {
+    "day": 20,
+    "topics": ["Graphs", "Heap & Hashing"],
+    "questions": [
+      {"topic": "Graphs", "easy": 0, "medium": 1, "hard": 1},
+      {"topic": "Heap & Hashing", "easy": 0, "medium": 1, "hard": 0}
+    ],
+    "total_easy": 0,
+    "total_medium": 2,
+    "total_hard": 1,
+    "phase": "Intermediate"
+  },
+  {
+    "day": 21,
+    "topics": ["Backtracking", "Searching & Sorting"],
+    "questions": [
+      {"topic": "Backtracking", "easy": 0, "medium": 1, "hard": 1},
+      {"topic": "Searching & Sorting", "easy": 0, "medium": 1, "hard": 0}
+    ],
+    "total_easy": 0,
+    "total_medium": 2,
+    "total_hard": 1,
+    "phase": "Advanced"
+  },
+  {
+    "day": 22,
+    "topics": ["DP", "Segment Tree"],
+    "questions": [
+      {"topic": "DP", "easy": 0, "medium": 4, "hard": 2},
+      {"topic": "Segment Tree", "easy": 0, "medium": 1, "hard": 0}
+    ],
+    "total_easy": 0,
+    "total_medium": 5,
+    "total_hard": 2,
+    "phase": "Advanced"
+  },
+  {
+    "day": 23,
+    "topics": ["Stack & Queue", "Arrays"],
+    "questions": [
+      {"topic": "Stack & Queue", "easy": 1, "medium": 1, "hard": 0},
+      {"topic": "Arrays", "easy": 0, "medium": 1, "hard": 0}
+    ],
+    "total_easy": 1,
+    "total_medium": 2,
+    "total_hard": 0,
+    "phase": "Advanced"
+  },
+  {
+    "day": 24,
+    "topics": ["Graphs", "Bit Manipulation"],
+    "questions": [
+      {"topic": "Graphs", "easy": 1, "medium": 1, "hard": 0},
+      {"topic": "Bit Manipulation", "easy": 1, "medium": 0, "hard": 0}
+    ],
+    "total_easy": 2,
+    "total_medium": 1,
+    "total_hard": 0,
+    "phase": "Advanced"
+  },
+  {
+    "day": 25,
+    "topics": ["DP", "Greedy"],
+    "questions": [
+      {"topic": "DP", "easy": 0, "medium": 4, "hard": 2},
+      {"topic": "Greedy", "easy": 0, "medium": 1, "hard": 0}
+    ],
+    "total_easy": 0,
+    "total_medium": 5,
+    "total_hard": 2,
+    "phase": "Advanced"
+  },
+  {
+    "day": 26,
+    "topics": ["Heap & Hashing", "Binary Trees"],
+    "questions": [
+      {"topic": "Heap & Hashing", "easy": 1, "medium": 1, "hard": 0},
+      {"topic": "Binary Trees", "easy": 0, "medium": 1, "hard": 0}
+    ],
+    "total_easy": 1,
+    "total_medium": 2,
+    "total_hard": 0,
+    "phase": "Advanced"
+  },
+  {
+    "day": 27,
+    "topics": ["Backtracking", "Strings", "Searching & Sorting"],
+    "questions": [
+      {"topic": "Backtracking", "easy": 0, "medium": 1, "hard": 1},
+      {"topic": "Strings", "easy": 0, "medium": 1, "hard": 0},
+      {"topic": "Searching & Sorting", "easy": 0, "medium": 1, "hard": 0}
+    ],
+    "total_easy": 0,
+    "total_medium": 3,
+    "total_hard": 1,
+    "phase": "Advanced"
+  },
+  {
+    "day": 28,
+    "topics": ["Graphs", "Tries"],
+    "questions": [
+      {"topic": "Graphs", "easy": 0, "medium": 4, "hard": 2},
+      {"topic": "Tries", "easy": 0, "medium": 0, "hard": 1}
+    ],
+    "total_easy": 0,
+    "total_medium": 4,
+    "total_hard": 3,
+    "phase": "Advanced"
+  },
+  {
+    "day": 29,
+    "topics": ["DP", "Segment Tree"],
+    "questions": [
+      {"topic": "DP", "easy": 0, "medium": 4, "hard": 2},
+      {"topic": "Segment Tree", "easy": 0, "medium": 1, "hard": 0}
+    ],
+    "total_easy": 0,
+    "total_medium": 5,
+    "total_hard": 2,
+    "phase": "Advanced"
+  },
+  {
+    "day": 30,
+    "topics": ["Mixed Bag Review"],
+    "questions": [
+      {"topic": "Mixed", "easy": 0, "medium": 3, "hard": 2}
+    ],
+    "total_easy": 0,
+    "total_medium": 3,
+    "total_hard": 2,
+    "phase": "Advanced"
+  }
+]
