@@ -13,7 +13,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS
+# Custom CSS with Dark Mode Support
 st.markdown("""
 <style>
     .main-header {
@@ -26,9 +26,10 @@ st.markdown("""
         padding: 1.5rem;
         border-radius: 10px;
         border-left: 5px solid #1f77b4;
-        background-color: white;
+        background-color: var(--background-color);
         margin: 0.5rem 0;
         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border: 1px solid var(--border-color);
     }
     .completed {
         border-left-color: #00cc96;
@@ -43,10 +44,12 @@ st.markdown("""
         display: inline-block;
         padding: 0.3rem 0.8rem;
         margin: 0.2rem;
-        background-color: #e0e0e0;
+        background-color: var(--badge-bg);
+        color: var(--badge-text);
         border-radius: 20px;
         font-size: 0.9rem;
         font-weight: 500;
+        border: 1px solid var(--border-color);
     }
     .metric-card {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -54,16 +57,18 @@ st.markdown("""
         padding: 1.5rem;
         border-radius: 10px;
         text-align: center;
+        border: 1px solid var(--border-color);
     }
     .progress-container {
-        background-color: #f8f9fa;
+        background-color: var(--secondary-background-color);
         padding: 1rem;
         border-radius: 8px;
         margin: 0.5rem 0;
+        border: 1px solid var(--border-color);
     }
     .topic-progress-bar {
         height: 8px;
-        background-color: #e0e0e0;
+        background-color: var(--progress-bg);
         border-radius: 4px;
         margin: 5px 0;
     }
@@ -73,10 +78,188 @@ st.markdown("""
         background: linear-gradient(90deg, #667eea, #764ba2);
     }
     .question-distribution {
-        background-color: #f8f9fa;
+        background-color: var(--secondary-background-color);
         padding: 0.5rem;
         border-radius: 5px;
         margin: 0.2rem 0;
+        border: 1px solid var(--border-color);
+    }
+    
+    /* Dark Mode Variables */
+    :root {
+        --background-color: #ffffff;
+        --secondary-background-color: #f8f9fa;
+        --text-color: #31333F;
+        --border-color: #e0e0e0;
+        --badge-bg: #e0e0e0;
+        --badge-text: #31333F;
+        --progress-bg: #e0e0e0;
+    }
+    
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --background-color: #0e1117;
+            --secondary-background-color: #262730;
+            --text-color: #fafafa;
+            --border-color: #424242;
+            --badge-bg: #424242;
+            --badge-text: #fafafa;
+            --progress-bg: #424242;
+        }
+    }
+    
+    /* Custom Button Styles */
+    .stButton button {
+        border: 1px solid var(--border-color) !important;
+        background-color: var(--background-color) !important;
+        color: var(--text-color) !important;
+        transition: all 0.3s ease !important;
+        border-radius: 8px !important;
+        padding: 0.5rem 1rem !important;
+        font-weight: 500 !important;
+    }
+    
+    .stButton button:hover {
+        background-color: var(--secondary-background-color) !important;
+        border-color: #667eea !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3) !important;
+    }
+    
+    .stButton button:active {
+        transform: translateY(0) !important;
+    }
+    
+    /* Primary Action Buttons */
+    .primary-button button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        border: none !important;
+        font-weight: 600 !important;
+    }
+    
+    .primary-button button:hover {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%) !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4) !important;
+    }
+    
+    /* Success Button */
+    .success-button button {
+        background: linear-gradient(135deg, #00cc96 0%, #00a375 100%) !important;
+        color: white !important;
+        border: none !important;
+    }
+    
+    .success-button button:hover {
+        background: linear-gradient(135deg, #00a375 0%, #00cc96 100%) !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(0, 204, 150, 0.4) !important;
+    }
+    
+    /* Warning Button */
+    .warning-button button {
+        background: linear-gradient(135deg, #ffa15c 0%, #ff8c42 100%) !important;
+        color: white !important;
+        border: none !important;
+    }
+    
+    .warning-button button:hover {
+        background: linear-gradient(135deg, #ff8c42 0%, #ffa15c 100%) !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(255, 161, 92, 0.4) !important;
+    }
+    
+    /* Danger Button */
+    .danger-button button {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%) !important;
+        color: white !important;
+        border: none !important;
+    }
+    
+    .danger-button button:hover {
+        background: linear-gradient(135deg, #ff5252 0%, #ff6b6b 100%) !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4) !important;
+    }
+    
+    /* Number Input Styling */
+    .stNumberInput input {
+        background-color: var(--background-color) !important;
+        color: var(--text-color) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 6px !important;
+    }
+    
+    .stNumberInput input:focus {
+        border-color: #667eea !important;
+        box-shadow: 0 0 0 1px #667eea !important;
+    }
+    
+    /* Selectbox Styling */
+    .stSelectbox select {
+        background-color: var(--background-color) !important;
+        color: var(--text-color) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 6px !important;
+    }
+    
+    .stSelectbox select:focus {
+        border-color: #667eea !important;
+        box-shadow: 0 0 0 1px #667eea !important;
+    }
+    
+    /* Text Area Styling */
+    .stTextArea textarea {
+        background-color: var(--background-color) !important;
+        color: var(--text-color) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 6px !important;
+    }
+    
+    .stTextArea textarea:focus {
+        border-color: #667eea !important;
+        box-shadow: 0 0 0 1px #667eea !important;
+    }
+    
+    /* Expander Styling */
+    .streamlit-expanderHeader {
+        background-color: var(--secondary-background-color) !important;
+        color: var(--text-color) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 6px !important;
+    }
+    
+    .streamlit-expanderContent {
+        background-color: var(--background-color) !important;
+        border: 1px solid var(--border-color) !important;
+        border-top: none !important;
+        border-radius: 0 0 6px 6px !important;
+    }
+    
+    /* Custom button container classes */
+    .button-success {
+        border: none !important;
+        background: linear-gradient(135deg, #00cc96 0%, #00a375 100%) !important;
+        color: white !important;
+    }
+    
+    .button-warning {
+        border: none !important;
+        background: linear-gradient(135deg, #ffa15c 0%, #ff8c42 100%) !important;
+        color: white !important;
+    }
+    
+    .button-danger {
+        border: none !important;
+        background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%) !important;
+        color: white !important;
+    }
+    
+    .button-primary {
+        border: none !important;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -119,7 +302,7 @@ class DSAPlanGenerator:
                         'difficulty': difficulty
                     })
         
-        # Shuffle questions to mix topics (but we'll do strategic grouping)
+        # Shuffle questions to mix topics
         import random
         random.seed(42)  # For consistent results
         
@@ -357,28 +540,43 @@ def main():
         statuses = ["All", "Completed", "In Progress", "Planned"]
         selected_status = st.selectbox("Filter by Status", statuses)
         
-        # Quick actions
+        # Quick actions with enhanced buttons
         st.markdown("---")
         st.header("⚡ Quick Actions")
-        if st.button("✅ Mark Today as Completed", use_container_width=True):
-            today_day = (datetime.now().date() - start_date).days + 1
-            if 1 <= today_day <= len(tracker.dsa_plan):
-                tracker.update_progress(today_day, 'completed')
-                st.success(f"🎉 Marked Day {today_day} as completed!")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("✅ Mark Today Complete", use_container_width=True, key="complete_today"):
+                today_day = (datetime.now().date() - start_date).days + 1
+                if 1 <= today_day <= len(tracker.dsa_plan):
+                    tracker.update_progress(today_day, 'completed')
+                    st.success(f"🎉 Marked Day {today_day} as completed!")
+                    st.rerun()
+        
+        with col2:
+            if st.button("🔄 Reset Progress", use_container_width=True, key="reset_progress"):
+                st.session_state.progress = {}
+                st.session_state.question_progress = {}
+                st.session_state.notes = {}
+                st.success("🔄 All progress reset!")
                 st.rerun()
         
-        if st.button("🔄 Reset All Progress", use_container_width=True):
-            st.session_state.progress = {}
-            st.session_state.question_progress = {}
-            st.session_state.notes = {}
-            st.success("🔄 All progress reset!")
-            st.rerun()
+        # Additional actions
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("🚀 Start Today", use_container_width=True, key="start_today"):
+                today_day = (datetime.now().date() - start_date).days + 1
+                if 1 <= today_day <= len(tracker.dsa_plan):
+                    tracker.update_progress(today_day, 'in-progress')
+                    st.success(f"🚀 Started Day {today_day}!")
+                    st.rerun()
         
-        if st.button("🔄 Regenerate Plan", use_container_width=True):
-            if os.path.exists('data/dsa_plan.json'):
-                os.remove('data/dsa_plan.json')
-            st.success("🔄 Plan will be regenerated on next run!")
-            st.rerun()
+        with col2:
+            if st.button("📊 Regenerate Plan", use_container_width=True, key="regenerate_plan"):
+                if os.path.exists('data/dsa_plan.json'):
+                    os.remove('data/dsa_plan.json')
+                st.success("📊 Plan will be regenerated on next run!")
+                st.rerun()
 
     # Main content tabs
     tab1, tab2, tab3, tab4, tab5 = st.tabs(["📅 Study Plan", "📈 Progress Analytics", "🎯 Today's Focus", "📊 Topic Mastery", "ℹ️ Plan Info"])
@@ -425,11 +623,6 @@ def display_day_card(day_data, tracker):
     total_hard = day_data['total_hard']
     status = tracker.get_day_status(day)
     
-    # Verify it's exactly 5 questions
-    total_questions = total_easy + total_medium + total_hard
-    if total_questions != 5:
-        st.error(f"Day {day} has {total_questions} questions instead of 5!")
-    
     # Calculate actual date
     start_date = st.session_state.start_date
     day_date = start_date + timedelta(days=day-1)
@@ -447,15 +640,16 @@ def display_day_card(day_data, tracker):
     # Card styling
     card_style = f"""
     border-left: 5px solid {status_info['color']}; 
-    background-color: white; 
+    background-color: var(--background-color); 
     padding: 1.5rem; 
     border-radius: 10px; 
     margin: 0.5rem 0; 
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 1px solid var(--border-color);
     """
     
     if is_today:
-        card_style += " border: 3px solid #ff4b4b;"
+        card_style += " border: 2px solid #ff4b4b !important;"
     
     with st.container():
         st.markdown(f'<div style="{card_style}">', unsafe_allow_html=True)
@@ -510,7 +704,7 @@ def display_day_card(day_data, tracker):
                 st.progress(progress)
                 st.caption(f"🔴 Hard: {completed_hard}/{total_hard}")
         
-        # Controls
+        # Controls with enhanced buttons
         st.markdown("---")
         col1, col2 = st.columns(2)
         
@@ -552,10 +746,24 @@ def display_day_card(day_data, tracker):
                                               label_visibility="collapsed")
                     tracker.update_question_progress(day, 'hard', hard_done)
         
+        # Action buttons for the day
+        st.markdown("---")
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            if st.button(f"🚀 Start Day {day}", use_container_width=True, key=f"start_{day}"):
+                tracker.update_progress(day, 'in-progress')
+                st.rerun()
+        
+        with col2:
+            if st.button(f"✅ Complete Day {day}", use_container_width=True, key=f"complete_{day}"):
+                tracker.update_progress(day, 'completed')
+                st.rerun()
+        
         # Notes
         note_key = f"note_{day}"
         current_note = st.session_state.notes.get(day, "")
-        with st.expander("📝 Notes"):
+        with st.expander("📝 Notes & Resources"):
             new_note = st.text_area("Add your notes here", value=current_note, key=note_key, height=100,
                                    placeholder="Write your insights, challenges, or resources for this day...")
             if new_note != current_note:
@@ -671,17 +879,17 @@ def display_todays_focus(tracker):
             if easy + medium + hard > 0:
                 st.write(f"• **{topic}:** {easy}E + {medium}M + {hard}H")
         
-        # Quick actions
+        # Quick actions with enhanced buttons
         st.subheader("⚡ Quick Actions")
         action_col1, action_col2 = st.columns(2)
         
         with action_col1:
-            if st.button("🚀 Start Day", use_container_width=True):
+            if st.button("🚀 Start Today", use_container_width=True, key="start_today_main"):
                 tracker.update_progress(day_number, 'in-progress')
                 st.rerun()
         
         with action_col2:
-            if st.button("✅ Complete Day", use_container_width=True):
+            if st.button("✅ Complete Today", use_container_width=True, key="complete_today_main"):
                 tracker.update_progress(day_number, 'completed')
                 st.rerun()
     
@@ -710,7 +918,7 @@ def display_todays_focus(tracker):
     # Resources section
     st.subheader("💡 Study Resources")
     resources = tracker.get_topic_resources(today_data['topics'])
-    for resource in resources[:5]:  # Show top 5 resources
+    for resource in resources[:5]:
         st.write(f"• {resource}")
 
 def display_topic_mastery(tracker):
