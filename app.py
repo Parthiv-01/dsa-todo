@@ -27,10 +27,6 @@ DSA_TOPICS = {
 DIFFICULTY_LEVELS = ["Easy", "Medium", "Hard"]
 DATA_FILE = Path("dsa_progress.json")
 
-# Initialize session state
-if 'data' not in st.session_state:
-    st.session_state.data = load_data()
-
 def load_data():
     """Load progress data from file"""
     if DATA_FILE.exists():
@@ -41,6 +37,10 @@ def load_data():
         "daily_questions": {},
         "last_generated": None
     }
+
+# Initialize session state
+if 'data' not in st.session_state:
+    st.session_state.data = load_data()
 
 def save_data():
     """Save progress data to file"""
