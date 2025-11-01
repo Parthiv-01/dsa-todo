@@ -128,7 +128,7 @@ def main():
                 st.progress(pct / 100, text=f"{topic}: {stats['completed']}/{stats['total']}")
     
     # Main content tabs
-    tab1, tab2, tab3 = st.tabs(["📅 Today's Questions", "📈 History", "📋 All Topics"])
+    tab1, tab2, tab3, tab4 = st.tabs(["📅 Today's Questions", "📈 History", "📋 All Topics", "✏️ Manual Entry"])
     
     # Tab 1: Today's Questions
     with tab1:
