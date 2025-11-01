@@ -368,4 +368,301 @@ def display_day_card(day_data, tracker):
         total_hard = day_data['total_hard']
         
         completed_easy = tracker.get_question_status(day, 'easy')
-        completed_medium = tracker.get
+        completed_medium = tracker.get_question_status(day, 'medium')
+        completed_hard = tracker.get_question_status(day, 'hard')
+        
+        st.markdown("---")
+        st.write("**Progress:**")
+        
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            if total_easy > 0:
+                progress = completed_easy / total_easy
+                st.progress(progress)
+                st.caption(f"🟢 Easy: {completed_easy}/{total_easy}")
+        with col2:
+            if total_medium > 0:
+                progress = completed_medium / total_medium
+                st.progress(progress)
+                st.caption(f"🟡 Medium: {completed_medium}/{total_medium}")
+        with col3:
+            if total_hard > 0:
+                progress = completed_hard / total_hard
+                st.progress(progress)
+                st.caption(f"🔴 Hard: {completed_hard}/{total_hard}")
+        
+        # Controls
+        st.markdown("---")
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            current_status = tracker.get_day_status(day)
+            new_status = st.selectbox(
+                "Status",
+                ["planned", "in-progress", "completed"],
+                index=["planned", "in-progress", "completed"].index(current_status),
+                key=f"status_{day}",
+                label_visibility="collapsed"
+            )
+            if new_status != current_status:
+                tracker.update_progress(day, new_status)
+                st.rerun()
+        
+        with col2:
+            st.write("**Update Progress:**")
+            subcol1, subcol2, subcol3 = st.columns(3)
+            with subcol1:
+                if total_easy > 0:
+                    easy_done = st.number_input("E", 0, total_easy, 
+                                              tracker.get_question_status(day, 'easy'),
+                                              key=f"easy_{day}",
+                                              label_visibility="collapsed")
+                    tracker.update_question_progress(day, 'easy', easy_done)
+            with subcol2:
+                if total_medium > 0:
+                    medium_done = st.number_input("M", 0, total_medium,
+                                                tracker.get_question_status(day, 'medium'),
+                                                key=f"medium_{day}",
+                                                label_visibility="collapsed")
+                    tracker.update_question_progress(day, 'medium', medium_done)
+            with subcol3:
+                if total_hard > 0:
+                    hard_done = st.number_input("H", 0, total_hard,
+                                              tracker.get_question_status(day, 'hard'),
+                                              key=f"hard_{day}",
+                                              label_visibility="collapsed")
+                    tracker.update_question_progress(day, 'hard', hard_done)
+        
+        # Notes
+        note_key = f"note_{day}"
+        current_note = st.session_state.notes.get(day, "")
+        with st.expander("📝 Notes"):
+            new_note = st.text_area("Add your notes here", value=current_note, key=note_key, height=100,
+                                   placeholder="Write your insights, challenges, or resources for this day...")
+            if new_note != current_note:
+                st.session_state.notes[day] = new_note
+        
+        st.markdown('</div>', unsafe_allow_html=True)
+
+def display_analytics(tracker):
+    st.header("📈 Progress Analytics")
+    
+    metrics = tracker.calculate_metrics()
+    
+    # Overall metrics
+    st.subheader("🎯 Overall Progress")
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.metric("Total Days", metrics['total_days'])
+    with col2:
+        st.metric("Days Completed", metrics['completed_days'])
+    with col3:
+        st.metric("Completion Rate", f"{metrics['completion_rate']:.1f}%")
+    with col4:
+        st.metric("Current Streak", f"{metrics['current_streak']} days")
+    
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.metric("Total Questions", metrics['total_questions'])
+    with col2:
+        st.metric("Questions Done", metrics['completed_questions'])
+    with col3:
+        st.metric("Question Progress", f"{metrics['question_completion_rate']:.1f}%")
+    with col4:
+        days_remaining = len(tracker.dsa_plan) - metrics['completed_days']
+        st.metric("Days Remaining", days_remaining)
+    
+    # Progress breakdown
+    st.subheader("📊 Progress Breakdown")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        # Day status distribution
+        status_counts = {'completed': 0, 'in-progress': 0, 'planned': 0}
+        for day in range(1, len(tracker.dsa_plan) + 1):
+            status = tracker.get_day_status(day)
+            status_counts[status] += 1
+        
+        st.write("**Day Status Distribution:**")
+        for status, count in status_counts.items():
+            percentage = (count / len(tracker.dsa_plan)) * 100
+            st.write(f"- **{status.title()}:** {count} days ({percentage:.1f}%)")
+    
+    with col2:
+        # Question difficulty distribution
+        difficulty_totals = {'easy': 0, 'medium': 0, 'hard': 0}
+        difficulty_completed = {'easy': 0, 'medium': 0, 'hard': 0}
+        
+        for day_data in tracker.dsa_plan:
+            day = day_data['day']
+            difficulty_totals['easy'] += day_data['total_easy']
+            difficulty_totals['medium'] += day_data['total_medium']
+            difficulty_totals['hard'] += day_data['total_hard']
+            
+            difficulty_completed['easy'] += tracker.get_question_status(day, 'easy')
+            difficulty_completed['medium'] += tracker.get_question_status(day, 'medium')
+            difficulty_completed['hard'] += tracker.get_question_status(day, 'hard')
+        
+        st.write("**Questions by Difficulty:**")
+        for diff in ['easy', 'medium', 'hard']:
+            if difficulty_totals[diff] > 0:
+                percent = (difficulty_completed[diff] / difficulty_totals[diff]) * 100
+                st.write(f"- **{diff.title()}:** {difficulty_completed[diff]}/{difficulty_totals[diff]} ({percent:.1f}%)")
+
+def display_todays_focus(tracker):
+    st.header("🎯 Today's Focus")
+    
+    start_date = st.session_state.start_date
+    today = datetime.now().date()
+    day_number = (today - start_date).days + 1
+    
+    if day_number < 1:
+        st.warning("📅 Your DSA journey hasn't started yet! Update your start date in the sidebar.")
+        return
+    elif day_number > len(tracker.dsa_plan):
+        st.success("🎉 Congratulations! You've completed the DSA challenge!")
+        st.balloons()
+        return
+    
+    today_data = next((day for day in tracker.dsa_plan if day['day'] == day_number), None)
+    if not today_data:
+        st.error("❌ No data found for today!")
+        return
+    
+    status = tracker.get_day_status(day_number)
+    
+    st.subheader(f"Day {day_number}: {', '.join(today_data['topics'])}")
+    
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        st.write(f"**Phase:** {today_data['phase']}")
+        st.write(f"**Total Questions:** {today_data['total_easy']}E + {today_data['total_medium']}M + {today_data['total_hard']}H")
+        st.write(f"**Status:** {status.upper()}")
+        
+        # Detailed question breakdown
+        st.write("**Question Breakdown:**")
+        for q in today_data['questions']:
+            topic = q['topic']
+            easy = q['easy']
+            medium = q['medium']
+            hard = q['hard']
+            if easy + medium + hard > 0:
+                st.write(f"• **{topic}:** {easy}E + {medium}M + {hard}H")
+        
+        # Quick actions
+        st.subheader("⚡ Quick Actions")
+        action_col1, action_col2 = st.columns(2)
+        
+        with action_col1:
+            if st.button("🚀 Start Day", use_container_width=True):
+                tracker.update_progress(day_number, 'in-progress')
+                st.rerun()
+        
+        with action_col2:
+            if st.button("✅ Complete Day", use_container_width=True):
+                tracker.update_progress(day_number, 'completed')
+                st.rerun()
+    
+    with col2:
+        # Progress for today
+        if status == 'completed':
+            st.success("✅ Day Completed!")
+        elif status == 'in-progress':
+            st.info("🔄 In Progress")
+        else:
+            st.warning("📋 Planned")
+        
+        # Today's progress
+        completed_easy = tracker.get_question_status(day_number, 'easy')
+        completed_medium = tracker.get_question_status(day_number, 'medium')
+        completed_hard = tracker.get_question_status(day_number, 'hard')
+        
+        st.write("**Today's Progress:**")
+        if today_data['total_easy'] > 0:
+            st.write(f"🟢 Easy: {completed_easy}/{today_data['total_easy']}")
+        if today_data['total_medium'] > 0:
+            st.write(f"🟡 Medium: {completed_medium}/{today_data['total_medium']}")
+        if today_data['total_hard'] > 0:
+            st.write(f"🔴 Hard: {completed_hard}/{today_data['total_hard']}")
+    
+    # Resources section
+    st.subheader("💡 Study Resources")
+    resources = tracker.get_topic_resources(today_data['topics'])
+    for resource in resources[:5]:  # Show top 5 resources
+        st.write(f"• {resource}")
+
+def display_topic_mastery(tracker):
+    st.header("📊 Topic Mastery")
+    
+    # Calculate topic-wise progress
+    topic_progress = {}
+    
+    for topic, totals in tracker.topic_totals.items():
+        topic_progress[topic] = {
+            'total': totals['easy'] + totals['medium'] + totals['hard'],
+            'completed': 0,
+            'easy_completed': 0,
+            'medium_completed': 0,
+            'hard_completed': 0
+        }
+    
+    # Calculate completed questions per topic
+    for day_data in tracker.dsa_plan:
+        day = day_data['day']
+        for q in day_data['questions']:
+            topic = q['topic']
+            if topic in topic_progress:
+                # This is a simplified calculation - in a real app, you'd track per-topic progress
+                easy_progress = min(q['easy'], tracker.get_question_status(day, 'easy'))
+                medium_progress = min(q['medium'], tracker.get_question_status(day, 'medium'))
+                hard_progress = min(q['hard'], tracker.get_question_status(day, 'hard'))
+                
+                topic_progress[topic]['completed'] += easy_progress + medium_progress + hard_progress
+                topic_progress[topic]['easy_completed'] += easy_progress
+                topic_progress[topic]['medium_completed'] += medium_progress
+                topic_progress[topic]['hard_completed'] += hard_progress
+    
+    # Display topic progress
+    st.subheader("Topic-wise Progress")
+    
+    for topic, progress in sorted(topic_progress.items(), key=lambda x: x[1]['completed']/x[1]['total'] if x[1]['total'] > 0 else 0, reverse=True):
+        if progress['total'] > 0:
+            completion_rate = (progress['completed'] / progress['total']) * 100
+            
+            st.write(f"**{topic}**")
+            st.write(f"Progress: {progress['completed']}/{progress['total']} ({completion_rate:.1f}%)")
+            
+            # Progress bar
+            st.markdown(f"""
+            <div class="topic-progress-bar">
+                <div class="topic-progress-fill" style="width: {completion_rate}%;"></div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            # Difficulty breakdown
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                if tracker.topic_totals[topic]['easy'] > 0:
+                    easy_rate = (progress['easy_completed'] / tracker.topic_totals[topic]['easy']) * 100
+                    st.caption(f"🟢 Easy: {progress['easy_completed']}/{tracker.topic_totals[topic]['easy']} ({easy_rate:.1f}%)")
+            with col2:
+                if tracker.topic_totals[topic]['medium'] > 0:
+                    medium_rate = (progress['medium_completed'] / tracker.topic_totals[topic]['medium']) * 100
+                    st.caption(f"🟡 Medium: {progress['medium_completed']}/{tracker.topic_totals[topic]['medium']} ({medium_rate:.1f}%)")
+            with col3:
+                if tracker.topic_totals[topic]['hard'] > 0:
+                    hard_rate = (progress['hard_completed'] / tracker.topic_totals[topic]['hard']) * 100
+                    st.caption(f"🔴 Hard: {progress['hard_completed']}/{tracker.topic_totals[topic]['hard']} ({hard_rate:.1f}%)")
+            
+            st.markdown("---")
+
+if __name__ == "__main__":
+    # Create data directory if it doesn't exist
+    if not os.path.exists('data'):
+        os.makedirs('data')
+        st.warning("📁 Created 'data' directory. Please add the JSON files to it.")
+    
+    main()
