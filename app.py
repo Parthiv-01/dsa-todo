@@ -2,10 +2,12 @@ import streamlit as st
 from datetime import datetime, timedelta
 import json
 import os
+import math
+from collections import defaultdict
 
 # Page configuration
 st.set_page_config(
-    page_title="DSA Mastery Tracker - All Questions",
+    page_title="DSA Mastery Tracker - 5 Questions Daily",
     page_icon="🚀",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -70,20 +72,16 @@ st.markdown("""
         border-radius: 4px;
         background: linear-gradient(90deg, #667eea, #764ba2);
     }
+    .question-distribution {
+        background-color: #f8f9fa;
+        padding: 0.5rem;
+        border-radius: 5px;
+        margin: 0.2rem 0;
+    }
 </style>
 """, unsafe_allow_html=True)
 
 class DataLoader:
-    @staticmethod
-    def load_dsa_plan():
-        """Load the DSA plan from JSON file"""
-        try:
-            with open('data/dsa_plan.json', 'r') as f:
-                return json.load(f)
-        except FileNotFoundError:
-            st.error("❌ dsa_plan.json file not found. Please make sure it exists in the data folder.")
-            return []
-    
     @staticmethod
     def load_topic_totals():
         """Load topic totals from JSON file"""
@@ -104,12 +102,110 @@ class DataLoader:
             st.error("❌ resources.json file not found.")
             return {}
 
+class DSAPlanGenerator:
+    def __init__(self, topic_totals):
+        self.topic_totals = topic_totals
+        self.dsa_plan = []
+    
+    def generate_5_questions_plan(self):
+        """Generate a plan with exactly 5 questions per day"""
+        # Convert topic totals to a list of questions
+        all_questions = []
+        for topic, difficulties in self.topic_totals.items():
+            for difficulty, count in difficulties.items():
+                for _ in range(count):
+                    all_questions.append({
+                        'topic': topic,
+                        'difficulty': difficulty
+                    })
+        
+        # Shuffle questions to mix topics (but we'll do strategic grouping)
+        import random
+        random.seed(42)  # For consistent results
+        
+        # Group by topic first, then shuffle within topics
+        topic_groups = defaultdict(list)
+        for q in all_questions:
+            topic_groups[q['topic']].append(q)
+        
+        # Flatten while trying to mix topics
+        mixed_questions = []
+        max_topic_length = max(len(questions) for questions in topic_groups.values())
+        
+        for i in range(max_topic_length):
+            for topic in topic_groups:
+                if i < len(topic_groups[topic]):
+                    mixed_questions.append(topic_groups[topic][i])
+        
+        # Final shuffle
+        random.shuffle(mixed_questions)
+        
+        # Create days with exactly 5 questions each
+        total_days = math.ceil(len(mixed_questions) / 5)
+        self.dsa_plan = []
+        
+        for day in range(1, total_days + 1):
+            start_idx = (day - 1) * 5
+            end_idx = min(day * 5, len(mixed_questions))
+            day_questions = mixed_questions[start_idx:end_idx]
+            
+            # Count questions by topic and difficulty
+            topic_counts = defaultdict(lambda: {'easy': 0, 'medium': 0, 'hard': 0})
+            for q in day_questions:
+                topic_counts[q['topic']][q['difficulty']] += 1
+            
+            # Convert to the required format
+            questions_formatted = []
+            for topic, counts in topic_counts.items():
+                if sum(counts.values()) > 0:
+                    questions_formatted.append({
+                        'topic': topic,
+                        'easy': counts['easy'],
+                        'medium': counts['medium'],
+                        'hard': counts['hard']
+                    })
+            
+            # Determine phase based on day number
+            if day <= 10:
+                phase = "Foundation"
+            elif day <= 20:
+                phase = "Intermediate"
+            else:
+                phase = "Advanced"
+            
+            self.dsa_plan.append({
+                'day': day,
+                'topics': list(topic_counts.keys()),
+                'questions': questions_formatted,
+                'total_easy': sum(q['difficulty'] == 'easy' for q in day_questions),
+                'total_medium': sum(q['difficulty'] == 'medium' for q in day_questions),
+                'total_hard': sum(q['difficulty'] == 'hard' for q in day_questions),
+                'phase': phase
+            })
+        
+        return self.dsa_plan
+
 class DSATracker:
     def __init__(self):
-        self.dsa_plan = DataLoader.load_dsa_plan()
         self.topic_totals = DataLoader.load_topic_totals()
         self.resources = DataLoader.load_resources()
+        self.dsa_plan = self.generate_dsa_plan()
         self.initialize_session_state()
+    
+    def generate_dsa_plan(self):
+        """Generate or load DSA plan"""
+        # Try to load existing plan
+        try:
+            with open('data/dsa_plan.json', 'r') as f:
+                return json.load(f)
+        except FileNotFoundError:
+            # Generate new plan
+            generator = DSAPlanGenerator(self.topic_totals)
+            plan = generator.generate_5_questions_plan()
+            # Save generated plan
+            with open('data/dsa_plan.json', 'w') as f:
+                json.dump(plan, f, indent=2)
+            return plan
     
     def initialize_session_state(self):
         if 'progress' not in st.session_state:
@@ -198,7 +294,7 @@ class DSATracker:
         return resources if resources else ["Practice fundamental problems", "Review basic concepts"]
 
 def main():
-    st.markdown('<h1 class="main-header">🚀 DSA Mastery Tracker - All Questions Covered</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="main-header">🚀 DSA Mastery Tracker - 5 Questions Daily</h1>', unsafe_allow_html=True)
     
     # Initialize tracker
     tracker = DSATracker()
@@ -245,6 +341,13 @@ def main():
         )
         st.session_state.start_date = start_date
         
+        # Plan info
+        st.markdown("---")
+        st.header("📋 Plan Info")
+        st.write(f"**Total Days:** {len(tracker.dsa_plan)}")
+        st.write(f"**Total Questions:** {metrics['total_questions']}")
+        st.write(f"**Questions per Day:** 5")
+        
         # Filters
         st.markdown("---")
         st.header("🔍 Filters")
@@ -270,9 +373,15 @@ def main():
             st.session_state.notes = {}
             st.success("🔄 All progress reset!")
             st.rerun()
+        
+        if st.button("🔄 Regenerate Plan", use_container_width=True):
+            if os.path.exists('data/dsa_plan.json'):
+                os.remove('data/dsa_plan.json')
+            st.success("🔄 Plan will be regenerated on next run!")
+            st.rerun()
 
     # Main content tabs
-    tab1, tab2, tab3, tab4 = st.tabs(["📅 Study Plan", "📈 Progress Analytics", "🎯 Today's Focus", "📊 Topic Mastery"])
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(["📅 Study Plan", "📈 Progress Analytics", "🎯 Today's Focus", "📊 Topic Mastery", "ℹ️ Plan Info"])
 
     with tab1:
         display_daywise_plan(tracker, selected_phase, selected_status)
@@ -285,9 +394,13 @@ def main():
         
     with tab4:
         display_topic_mastery(tracker)
+        
+    with tab5:
+        display_plan_info(tracker)
 
 def display_daywise_plan(tracker, selected_phase, selected_status):
-    st.header("📅 30-Day DSA Study Plan")
+    st.header(f"📅 {len(tracker.dsa_plan)}-Day DSA Study Plan")
+    st.info(f"🎯 **Strictly 5 questions per day** | Total: {tracker.get_total_questions_count()} questions")
     
     # Filter data
     filtered_data = [day for day in tracker.dsa_plan if selected_phase == "All" or day['phase'] == selected_phase]
@@ -307,7 +420,15 @@ def display_day_card(day_data, tracker):
     topics = day_data['topics']
     questions = day_data['questions']
     phase = day_data['phase']
+    total_easy = day_data['total_easy']
+    total_medium = day_data['total_medium']
+    total_hard = day_data['total_hard']
     status = tracker.get_day_status(day)
+    
+    # Verify it's exactly 5 questions
+    total_questions = total_easy + total_medium + total_hard
+    if total_questions != 5:
+        st.error(f"Day {day} has {total_questions} questions instead of 5!")
     
     # Calculate actual date
     start_date = st.session_state.start_date
@@ -352,21 +473,19 @@ def display_day_card(day_data, tracker):
         for topic in topics:
             st.markdown(f'<span class="topic-badge">{topic}</span>', unsafe_allow_html=True)
         
-        # Questions breakdown
-        st.write("**Questions Breakdown:**")
+        # Questions breakdown - ALWAYS 5 QUESTIONS
+        st.write(f"**Questions: {total_easy}E + {total_medium}M + {total_hard}H**")
+        
+        # Show question distribution by topic
         for q in questions:
             topic = q['topic']
             easy = q['easy']
             medium = q['medium'] 
             hard = q['hard']
             if easy + medium + hard > 0:
-                st.write(f"• **{topic}:** {easy}E + {medium}M + {hard}H")
+                st.markdown(f'<div class="question-distribution">• <strong>{topic}:</strong> {easy}E + {medium}M + {hard}H</div>', unsafe_allow_html=True)
         
         # Progress bars
-        total_easy = day_data['total_easy']
-        total_medium = day_data['total_medium'] 
-        total_hard = day_data['total_hard']
-        
         completed_easy = tracker.get_question_status(day, 'easy')
         completed_medium = tracker.get_question_status(day, 'medium')
         completed_hard = tracker.get_question_status(day, 'hard')
@@ -658,6 +777,64 @@ def display_topic_mastery(tracker):
                     st.caption(f"🔴 Hard: {progress['hard_completed']}/{tracker.topic_totals[topic]['hard']} ({hard_rate:.1f}%)")
             
             st.markdown("---")
+
+def display_plan_info(tracker):
+    st.header("ℹ️ Plan Information")
+    
+    # Total calculations
+    total_questions = tracker.get_total_questions_count()
+    total_days = len(tracker.dsa_plan)
+    
+    st.subheader("📊 Plan Summary")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.metric("Total Questions", total_questions)
+    with col2:
+        st.metric("Total Days", total_days)
+    with col3:
+        st.metric("Questions per Day", 5)
+    
+    st.subheader("📈 Topic Distribution")
+    
+    # Create a table of topic distributions
+    topic_data = []
+    for topic, difficulties in tracker.topic_totals.items():
+        total = difficulties['easy'] + difficulties['medium'] + difficulties['hard']
+        topic_data.append({
+            'Topic': topic,
+            'Easy': difficulties['easy'],
+            'Medium': difficulties['medium'],
+            'Hard': difficulties['hard'],
+            'Total': total
+        })
+    
+    # Sort by total questions
+    topic_data.sort(key=lambda x: x['Total'], reverse=True)
+    
+    # Display as a table
+    for topic in topic_data:
+        col1, col2, col3, col4, col5 = st.columns([3, 1, 1, 1, 1])
+        with col1:
+            st.write(f"**{topic['Topic']}**")
+        with col2:
+            st.write(f"🟢 {topic['Easy']}")
+        with col3:
+            st.write(f"🟡 {topic['Medium']}")
+        with col4:
+            st.write(f"🔴 {topic['Hard']}")
+        with col5:
+            st.write(f"**{topic['Total']}**")
+    
+    st.subheader("🎯 Daily Structure")
+    st.write("""
+    - **Strictly 5 questions per day**
+    - **Mixed topics** to maintain variety
+    - **Progressive difficulty** across phases
+    - **Foundation Phase (Days 1-10):** Basic to intermediate concepts
+    - **Intermediate Phase (Days 11-20):** Complex problem patterns  
+    - **Advanced Phase (Days 21+):** Challenging problems and optimizations
+    """)
 
 if __name__ == "__main__":
     # Create data directory if it doesn't exist
