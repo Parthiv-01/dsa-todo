@@ -218,6 +218,87 @@ def main():
                 
                 st.divider()
     
+    # Tab 4: Manual Entry
+    with tab4:
+        st.header("✏️ Manually Mark Questions")
+        st.markdown("*Manually mark questions as solved to update your progress*")
+        
+        st.divider()
+        
+        # Topic selection
+        selected_topic = st.selectbox("Select Topic", sorted(DSA_TOPICS.keys()))
+        
+        if selected_topic:
+            counts = DSA_TOPICS[selected_topic]
+            
+            st.subheader(f"📚 {selected_topic}")
+            st.caption(f"Total: {sum(counts)} questions (Easy: {counts[0]}, Medium: {counts[1]}, Hard: {counts[2]})")
+            
+            # Create columns for each difficulty
+            col1, col2, col3 = st.columns(3)
+            
+            difficulties = ["Easy", "Medium", "Hard"]
+            today = get_today_str()
+            
+            for idx, (col, difficulty, count) in enumerate(zip([col1, col2, col3], difficulties, counts)):
+                with col:
+                    if count > 0:
+                        st.markdown(f"**🟢 {difficulty}**" if idx == 0 else f"**🟡 {difficulty}**" if idx == 1 else f"**🔴 {difficulty}**")
+                        st.caption(f"{count} questions")
+                        st.write("")
+                        
+                        for q_num in range(1, count + 1):
+                            question_id = f"{selected_topic}_{difficulty}_{q_num}"
+                            
+                            # Check if question is already completed (across all dates)
+                            is_completed_ever = any(
+                                question_id in completed_list 
+                                for completed_list in st.session_state.data["completed"].values()
+                            )
+                            
+                            # Use on_change callback for immediate update
+                            def toggle_question(qid=question_id):
+                                today = get_today_str()
+                                # Check current state
+                                is_done = any(
+                                    qid in completed_list 
+                                    for completed_list in st.session_state.data["completed"].values()
+                                )
+                                
+                                if not is_done:
+                                    # Mark as complete
+                                    mark_complete(qid)
+                                else:
+                                    # Remove from all dates
+                                    for date_str in list(st.session_state.data["completed"].keys()):
+                                        if qid in st.session_state.data["completed"][date_str]:
+                                            st.session_state.data["completed"][date_str].remove(qid)
+                                    save_data()
+                            
+                            st.checkbox(
+                                f"Question {q_num}", 
+                                value=is_completed_ever,
+                                key=f"manual_{question_id}_{selected_topic}",
+                                on_change=toggle_question
+                            )
+                    else:
+                        st.markdown(f"**{difficulty}**")
+                        st.caption("No questions")
+            
+            # Show summary
+            st.divider()
+            topic_completed = sum(
+                1 for completed_list in st.session_state.data["completed"].values()
+                for qid in completed_list if qid.startswith(selected_topic + "_")
+            )
+            total_topic = sum(counts)
+            
+            col_a, col_b, col_c = st.columns([1, 2, 1])
+            with col_b:
+                progress_pct = (topic_completed / total_topic * 100) if total_topic > 0 else 0
+                st.progress(progress_pct / 100)
+                st.metric(f"{selected_topic} Progress", f"{topic_completed}/{total_topic}", f"{progress_pct:.1f}%")
+    
     # Footer
     st.markdown("---")
     col1, col2, col3 = st.columns(3)
