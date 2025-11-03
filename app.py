@@ -353,5 +353,6 @@ def main():
                 st.progress(progress_pct / 100)
                 st.metric(f"{selected_topic} Progress", f"{topic_completed}/{total_topic}", f"{progress_pct:.1f}%")
 
+
 if __name__ == "__main__":
     main()
