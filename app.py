@@ -113,10 +113,12 @@ def main():
         st.caption(f"Progress saved to: `{DATA_FILE}`")
         if os.path.exists(DATA_FILE):
             file_size = os.path.getsize(DATA_FILE)
+            file_mod_time = datetime.fromtimestamp(os.path.getmtime(DATA_FILE))
             st.caption(f"File size: {file_size} bytes")
+            st.caption(f"Last modified: {file_mod_time.strftime('%Y-%m-%d %H:%M:%S')}")
             
             # Add export/import functionality
-            col1, col2 = st.columns(2)
+            col1, col2, col3 = st.columns(3)
             with col1:
                 # Export data
                 with open(DATA_FILE, 'r') as f:
@@ -139,6 +141,17 @@ def main():
                         st.rerun()
                     except Exception as e:
                         st.error(f"Error importing data: {e}")
+            with col3:
+                # Create fresh data file
+                if st.button("🔄 Reset to Fresh", type="secondary", help="Clear all progress and start fresh"):
+                    st.session_state.data = {
+                        "completed": {},
+                        "daily_questions": {},
+                        "last_generated": None
+                    }
+                    save_data()
+                    st.success("✅ Progress reset! Starting fresh.")
+                    st.rerun()
         else:
             st.caption("No progress file found yet. Start solving questions to create one!")
     
