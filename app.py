@@ -2,7 +2,7 @@ import streamlit as st
 import json
 import random
 from datetime import datetime, timedelta
-from pathlib import Path
+import os
 
 # DSA Topics with question counts [easy, medium, hard]
 DSA_TOPICS = {
@@ -108,6 +108,40 @@ def main():
     st.title("📚 DSA Progress Tracker")
     st.markdown("*Track your daily DSA practice with 5 random questions each day*")
     
+    # Show data file location
+    with st.expander("ℹ️ Data Storage Info"):
+        st.caption(f"Progress saved to: `{DATA_FILE}`")
+        if os.path.exists(DATA_FILE):
+            file_size = os.path.getsize(DATA_FILE)
+            st.caption(f"File size: {file_size} bytes")
+            
+            # Add export/import functionality
+            col1, col2 = st.columns(2)
+            with col1:
+                # Export data
+                with open(DATA_FILE, 'r') as f:
+                    data_json = f.read()
+                st.download_button(
+                    label="📥 Export Progress",
+                    data=data_json,
+                    file_name="dsa_progress_backup.json",
+                    mime="application/json"
+                )
+            with col2:
+                # Import data
+                uploaded_file = st.file_uploader("📤 Import Progress", type=['json'], key="import_data")
+                if uploaded_file is not None:
+                    try:
+                        imported_data = json.load(uploaded_file)
+                        st.session_state.data = imported_data
+                        save_data()
+                        st.success("✅ Progress imported successfully!")
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"Error importing data: {e}")
+        else:
+            st.caption("No progress file found yet. Start solving questions to create one!")
+    
     # Sidebar - Overall Progress
     with st.sidebar:
         st.header("📊 Overall Progress")
@@ -160,7 +194,7 @@ def main():
                 }
                 
                 is_done = is_completed(q["id"], today)
-                checkbox_label = f"{difficulty_color[q['difficulty']]} **{q['topic']}** - {q['difficulty']} #{q['number']}"
+                checkbox_label = f"{difficulty_color[q['difficulty']]} **{q['topic']}** - {q['difficulty']}"
                 
                 if is_done:
                     st.markdown(f"~~{checkbox_label}~~ ✅")
@@ -192,7 +226,7 @@ def main():
                     for q in questions:
                         is_done = is_completed(q["id"], date_str)
                         status = "✅" if is_done else "⬜"
-                        st.markdown(f"{status} {q['topic']} - {q['difficulty']} #{q['number']}")
+                        st.markdown(f"{status} {q['topic']} - {q['difficulty']}")
         else:
             st.info("No history yet. Start solving today's questions!")
     
@@ -244,7 +278,14 @@ def main():
                 with col:
                     if count > 0:
                         st.markdown(f"**🟢 {difficulty}**" if idx == 0 else f"**🟡 {difficulty}**" if idx == 1 else f"**🔴 {difficulty}**")
-                        st.caption(f"{count} questions")
+                        
+                        # Count completed for this difficulty
+                        completed_in_diff = sum(
+                            1 for completed_list in st.session_state.data["completed"].values()
+                            for qid in completed_list 
+                            if qid.startswith(f"{selected_topic}_{difficulty}_")
+                        )
+                        st.caption(f"{completed_in_diff}/{count} solved")
                         st.write("")
                         
                         for q_num in range(1, count + 1):
@@ -298,25 +339,6 @@ def main():
                 progress_pct = (topic_completed / total_topic * 100) if total_topic > 0 else 0
                 st.progress(progress_pct / 100)
                 st.metric(f"{selected_topic} Progress", f"{topic_completed}/{total_topic}", f"{progress_pct:.1f}%")
-    
-    # Footer
-    st.markdown("---")
-    col1, col2, col3 = st.columns(3)
-    with col2:
-        if st.button("🔄 Reset All Progress", type="secondary"):
-            if st.session_state.get('confirm_reset', False):
-                st.session_state.data = {
-                    "completed": {},
-                    "daily_questions": {},
-                    "last_generated": None
-                }
-                save_data()
-                st.session_state.confirm_reset = False
-                st.success("Progress reset!")
-                st.rerun()
-            else:
-                st.session_state.confirm_reset = True
-                st.warning("Click again to confirm reset")
 
 if __name__ == "__main__":
     main()
