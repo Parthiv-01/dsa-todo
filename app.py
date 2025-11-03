@@ -25,27 +25,63 @@ DSA_TOPICS = {
 }
 
 DIFFICULTY_LEVELS = ["Easy", "Medium", "Hard"]
-DATA_FILE = Path("dsa_progress.json")
+
+# Use a persistent data directory that survives Streamlit Cloud restarts
+DATA_DIR = os.path.join(os.path.expanduser("~"), ".dsa_tracker")
+DATA_FILE = os.path.join(DATA_DIR, "progress.json")
+
+def ensure_data_dir():
+    """Ensure the data directory exists"""
+    if not os.path.exists(DATA_DIR):
+        try:
+            os.makedirs(DATA_DIR, exist_ok=True)
+        except Exception as e:
+            st.error(f"Could not create data directory: {e}")
 
 def load_data():
     """Load progress data from file"""
-    if DATA_FILE.exists():
-        with open(DATA_FILE, 'r') as f:
-            return json.load(f)
-    return {
+    ensure_data_dir()
+    try:
+        if os.path.exists(DATA_FILE):
+            with open(DATA_FILE, 'r') as f:
+                data = json.load(f)
+                # Validate data structure
+                if not isinstance(data, dict):
+                    raise ValueError("Invalid data format")
+                if "completed" not in data or "daily_questions" not in data:
+                    raise ValueError("Missing required keys")
+                return data
+    except Exception as e:
+        st.warning(f"Could not load progress, creating fresh file: {e}")
+    
+    # Create fresh data structure
+    fresh_data = {
         "completed": {},
         "daily_questions": {},
         "last_generated": None
     }
+    
+    # Save the fresh data immediately
+    try:
+        with open(DATA_FILE, 'w') as f:
+            json.dump(fresh_data, f, indent=2)
+    except Exception as e:
+        st.error(f"Could not create data file: {e}")
+    
+    return fresh_data
+
+def save_data():
+    """Save progress data to file"""
+    ensure_data_dir()
+    try:
+        with open(DATA_FILE, 'w') as f:
+            json.dump(st.session_state.data, f, indent=2)
+    except Exception as e:
+        st.error(f"Could not save progress: {e}")
 
 # Initialize session state
 if 'data' not in st.session_state:
     st.session_state.data = load_data()
-
-def save_data():
-    """Save progress data to file"""
-    with open(DATA_FILE, 'w') as f:
-        json.dump(st.session_state.data, f, indent=2)
 
 def generate_daily_questions(date_str):
     """Generate 5 random questions for the day"""
@@ -352,7 +388,6 @@ def main():
                 progress_pct = (topic_completed / total_topic * 100) if total_topic > 0 else 0
                 st.progress(progress_pct / 100)
                 st.metric(f"{selected_topic} Progress", f"{topic_completed}/{total_topic}", f"{progress_pct:.1f}%")
-
 
 if __name__ == "__main__":
     main()
